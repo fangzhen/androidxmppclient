@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/window_bg"
+    android:orientation="horizontal" >
+    <ImageView 
+        android:id="@+id/friend_icon"
+        android:layout_width="40.0dp"
+        android:layout_height="40.0dp"
+        android:layout_margin="3dip"
+        android:background="@drawable/bitboy"/>
+	<TextView 
+	    android:id="@+id/friend_nickname"
+	    android:layout_width="fill_parent"
+	    android:layout_toRightOf="@id/friend_icon"
+	    android:paddingTop="5.0dp"
+	    android:textColor="@color/title_bg"
+	    android:layout_height="wrap_content"
+	    android:textSize="16.0sp"
+	    android:text="游戏人间"/>
+	<TextView 
+	    android:id="@+id/friend_mood"
+	    android:layout_width="fill_parent"
+	    android:layout_toRightOf="@id/friend_icon"
+	    android:layout_below="@id/friend_nickname"
+	    android:layout_height="wrap_content"
+	    android:textSize="12.0sp"
+	    android:text="Q我吧，期待..."/>
+	<ImageView 
+	    android:layout_below="@id/friend_icon"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:background="@drawable/interval_line"/>
+</RelativeLayout>

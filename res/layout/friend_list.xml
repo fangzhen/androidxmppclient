@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+    <RelativeLayout
+        android:id="@+id/RelativeLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/login_bg" >
+        <ImageView
+            android:id="@+id/friend_list_myImg"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1.0"
+            android:src="@drawable/mypic" />
+        <LinearLayout 
+            android:id="@+id/lefttop"
+   			android:layout_width="fill_parent"
+    		android:layout_height="fill_parent"
+    		android:layout_toRightOf="@+id/friend_list_myImg">
+            <ImageView
+	            android:id="@+id/myStatusImage"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_centerVertical="true"
+	            android:layout_marginTop="5dp"
+	            android:layout_marginLeft="10dp"        
+	            android:src="@drawable/online" />
+           <TextView
+	            android:id="@+id/friend_list_myName"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_centerVertical="true"
+	            android:layout_marginLeft="10dp"
+	            android:layout_toRightOf="@+id/imageView1"
+	            android:layout_weight="1.0"
+	            android:text="way"
+	            android:textColor="#ffffff"
+	            android:textSize="20sp" />    
+        </LinearLayout>  
+    	<TextView
+	            android:id="@+id/myStatusText"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_centerVertical="true"
+	            android:layout_marginLeft="10dp"
+	            android:layout_weight="1.0"
+	            android:layout_alignBottom="@+id/friend_list_myImg"
+	            android:layout_toRightOf="@+id/friend_list_myImg"
+	            android:text="Q我吧，期待......"
+	            android:textColor="#ffffff"/>     
+    </RelativeLayout>
+    <LinearLayout
+        android:id="@+id/bodylayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#ffffff"
+        android:orientation="vertical" >
+      	<ExpandableListView
+	        android:id="@+id/contact_list_view"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:cacheColorHint="#00000000"
+	        android:childDivider="@drawable/interval_line"
+	        android:divider="@drawable/interval_line"
+	        android:groupIndicator="@null"
+	        android:listSelector="@drawable/list_item_bg" >
+   		</ExpandableListView>
+    </LinearLayout>
+</LinearLayout>

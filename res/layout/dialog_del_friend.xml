@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+    <TableRow >
+        <TextView 
+             android:text="你确定要删除以下联系人吗？"
+             android:layout_height="wrap_content"
+             android:layout_width="wrap_content"
+             android:layout_marginLeft="20px"/>               
+    </TableRow>
+    <TableRow >
+    	<TextView 
+            android:id="@+id/delname"
+            android:text=""
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="20px"/>               
+    </TableRow>
+    <TableRow >
+    	<CheckBox 
+	        android:checked="true"
+	        android:id="@+id/delCheckBox"
+	        android:text="将我从对方的列表中删除"
+	        android:textSize="14dip"/>                   
+    </TableRow>
+</TableLayout>
+

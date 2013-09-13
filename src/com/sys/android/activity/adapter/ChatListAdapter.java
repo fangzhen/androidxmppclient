@@ -12,16 +12,16 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.sys.android.entity.Msg;
+import com.sys.android.entity.MessageInfo;
 import com.sys.android.util.OpenfileFunction;
 import com.sys.android.xmpp.R;
 
 public class ChatListAdapter extends BaseAdapter {
 	private Context cxt;
 	private LayoutInflater inflater;
-	private List<Msg> listMsg;
+	private List<MessageInfo> listMsg;
 
-	public ChatListAdapter(Context formClient, List<Msg> list) {
+	public ChatListAdapter(Context formClient, List<MessageInfo> list) {
 		this.cxt = formClient;
 		listMsg = list;
 	}
@@ -63,8 +63,8 @@ public class ChatListAdapter extends BaseAdapter {
 		dateView.setText(listMsg.get(position).getDate());
 		msgView.setText(listMsg.get(position).getMsg());
 
-		if (!Msg.TYPE[2].equals(listMsg.get(position).getType())) {// normal ∆’Õ®msg
-			final Msg msg = listMsg.get(position);
+		if (!MessageInfo.TYPE[2].equals(listMsg.get(position).getType())) {// normal ∆’Õ®msg
+			final MessageInfo msg = listMsg.get(position);
 			TextView msgStatus = (TextView) convertView
 					.findViewById(R.id.msg_status);
 			msgStatus.setText(listMsg.get(position).getReceive() + "");

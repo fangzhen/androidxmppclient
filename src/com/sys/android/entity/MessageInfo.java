@@ -9,7 +9,7 @@ import android.util.Log;
 import com.sys.android.util.TimeRender;
 
  
-public class Msg {
+public class MessageInfo {
 	String userid;
 	String msg;
 	String date;
@@ -50,10 +50,10 @@ public class Msg {
 	public static final String[] TYPE= {"record","photo","normal"};
 	public static final String[] FROM_TYPE= {"IN","OUT"};
 
-	public Msg(){
+	public MessageInfo(){
 		
 	}
-	public Msg(String userid, String msg, String date, String from) {
+	public MessageInfo(String userid, String msg, String date, String from) {
 		this.userid = userid;
 		this.msg = msg;
 		this.date = date;
@@ -63,7 +63,7 @@ public class Msg {
 	 
 	 
 
-	public Msg(String userid, String msg, String date, String from,
+	public MessageInfo(String userid, String msg, String date, String from,
 			String type, String receive, String time, String filePath) {
 		super();
 		this.userid = userid;
@@ -103,7 +103,7 @@ public class Msg {
 		return STATUS;
 	}
 
-	public Msg(String userid, String msg, String date, String from,
+	public MessageInfo(String userid, String msg, String date, String from,
 			String type, String receive) {
 		super();
 		this.userid = userid;
@@ -151,19 +151,19 @@ public class Msg {
 	 * @param body
 	 * Json
 	 */
-	public static Msg analyseMsgBody(String jsonStr) {
-		Msg msg = new Msg();
+	public static MessageInfo analyseMsgBody(String jsonStr) {
+		MessageInfo msg = new MessageInfo();
 		// 获取用户、消息、时间、IN
 		try {
 			JSONObject jsonObject = new JSONObject(jsonStr);
-			msg.setUserid(jsonObject.getString(Msg.USERID));
-			msg.setFrom(jsonObject.getString(Msg.FROM));
-			msg.setMsg(jsonObject.getString(Msg.MSG_CONTENT));
-			msg.setDate(jsonObject.getString(Msg.DATE));
-			msg.setType(jsonObject.getString(Msg.MSG_TYPE));
-			msg.setReceive(jsonObject.getString(Msg.RECEIVE_STAUTS));
-			msg.setTime(jsonObject.getString(Msg.TIME_REDIO));
-			msg.setFilePath(jsonObject.getString(Msg.FIL_PAHT));
+			msg.setUserid(jsonObject.getString(MessageInfo.USERID));
+			msg.setFrom(jsonObject.getString(MessageInfo.FROM));
+			msg.setMsg(jsonObject.getString(MessageInfo.MSG_CONTENT));
+			msg.setDate(jsonObject.getString(MessageInfo.DATE));
+			msg.setType(jsonObject.getString(MessageInfo.MSG_TYPE));
+			msg.setReceive(jsonObject.getString(MessageInfo.RECEIVE_STAUTS));
+			msg.setTime(jsonObject.getString(MessageInfo.TIME_REDIO));
+			msg.setFilePath(jsonObject.getString(MessageInfo.FIL_PAHT));
 			
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
@@ -183,18 +183,18 @@ public class Msg {
 	/**
 	 * 传json 
 	 */
-	public static  String  toJson(Msg msg){
+	public static  String  toJson(MessageInfo msg){
 		JSONObject jsonObject=new JSONObject();
 		String jsonStr="";
 		try {
-			jsonObject.put(Msg.USERID, msg.getUserid()+"");
-			jsonObject.put(Msg.MSG_CONTENT, msg.getMsg()+"");
-			jsonObject.put(Msg.DATE, msg.getDate()+"");
-			jsonObject.put(Msg.FROM, msg.getFrom()+"");
-			jsonObject.put(Msg.MSG_TYPE, msg.getType()+"");
-			jsonObject.put(Msg.RECEIVE_STAUTS, msg.getReceive()+"");
-			jsonObject.put(Msg.TIME_REDIO, msg.getTime());
-			jsonObject.put(Msg.FIL_PAHT, msg.getFilePath());
+			jsonObject.put(MessageInfo.USERID, msg.getUserid()+"");
+			jsonObject.put(MessageInfo.MSG_CONTENT, msg.getMsg()+"");
+			jsonObject.put(MessageInfo.DATE, msg.getDate()+"");
+			jsonObject.put(MessageInfo.FROM, msg.getFrom()+"");
+			jsonObject.put(MessageInfo.MSG_TYPE, msg.getType()+"");
+			jsonObject.put(MessageInfo.RECEIVE_STAUTS, msg.getReceive()+"");
+			jsonObject.put(MessageInfo.TIME_REDIO, msg.getTime());
+			jsonObject.put(MessageInfo.FIL_PAHT, msg.getFilePath());
 			jsonStr= jsonObject.toString();
 			Log.d("msg json", jsonStr+""); 
 		} catch (JSONException e) {

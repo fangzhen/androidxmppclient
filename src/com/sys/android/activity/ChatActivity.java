@@ -42,7 +42,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sys.android.activity.adapter.ChatListAdapter;
-import com.sys.android.entity.Msg;
+import com.sys.android.entity.MessageInfo;
 import com.sys.android.selfview.RecordButton;
 import com.sys.android.selfview.RecordButton.OnFinishedRecordListener;
 import com.sys.android.util.TimeRender;
@@ -54,7 +54,7 @@ public class ChatActivity extends Activity {
 	private String userChat = "";// 当前聊天 userChat
 	private String userChatSendFile = "";// 给谁发文件
 	private ChatListAdapter adapter;
-	private List<Msg> listMsg = new LinkedList<Msg>();
+	private List<MessageInfo> listMsg = new LinkedList<MessageInfo>();
 	private String pUSERID;// 自己的user
 	private String pFRIENDID;// 窗口的 名称
 	private EditText msgText;
@@ -97,9 +97,9 @@ public class ChatActivity extends Activity {
 						if (audioPath != null) {
 							try {
 								// 自己显示消息
-								Msg myChatMsg = new Msg(pUSERID, time + "”语音消息",
-										TimeRender.getDate(), Msg.FROM_TYPE[1],
-										Msg.TYPE[0], Msg.STATUS[3], time + "",
+								MessageInfo myChatMsg = new MessageInfo(pUSERID, time + "”语音消息",
+										TimeRender.getDate(), MessageInfo.FROM_TYPE[1],
+										MessageInfo.TYPE[0], MessageInfo.STATUS[3], time + "",
 										audioPath);
 								listMsg.add(myChatMsg);
 								String[] pathStrings = audioPath.split("/"); // 文件名
@@ -109,16 +109,16 @@ public class ChatActivity extends Activity {
 								if (pathStrings!=null && pathStrings.length>0) {
 									fileName = pathStrings[pathStrings.length-1];
 								}
-								Msg sendChatMsg = new Msg(pUSERID, time + "”语音消息",
-										TimeRender.getDate(), Msg.FROM_TYPE[0],
-										Msg.TYPE[0], Msg.STATUS[3], time + "",
+								MessageInfo sendChatMsg = new MessageInfo(pUSERID, time + "”语音消息",
+										TimeRender.getDate(), MessageInfo.FROM_TYPE[0],
+										MessageInfo.TYPE[0], MessageInfo.STATUS[3], time + "",
 										fileName);
 								
 								// 刷新适配器
 								adapter.notifyDataSetChanged();
 
 								// 发送消息
-								newchat.sendMessage(Msg.toJson(sendChatMsg));
+								newchat.sendMessage(MessageInfo.toJson(sendChatMsg));
 								sendFile(audioPath, myChatMsg);//
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -229,17 +229,17 @@ public class ChatActivity extends Activity {
 				final String msg = msgText.getText().toString();
 				if (msg.length() > 0) {
 					// 自己显示消息
-					Msg chatMsg = new Msg(pUSERID, msg, TimeRender.getDate(),
-							Msg.FROM_TYPE[1]);
+					MessageInfo chatMsg = new MessageInfo(pUSERID, msg, TimeRender.getDate(),
+							MessageInfo.FROM_TYPE[1]);
  					listMsg.add(chatMsg);
  					//发送对方
- 					Msg sendChatMsg = new Msg(pUSERID, msg, TimeRender.getDate(),
-							Msg.FROM_TYPE[0]); 
+ 					MessageInfo sendChatMsg = new MessageInfo(pUSERID, msg, TimeRender.getDate(),
+							MessageInfo.FROM_TYPE[0]); 
 					// 刷新适配器
 					adapter.notifyDataSetChanged();
 					try {
 						// 发送消息
-						newchat.sendMessage(Msg.toJson(sendChatMsg));
+						newchat.sendMessage(MessageInfo.toJson(sendChatMsg));
 
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -284,7 +284,7 @@ public class ChatActivity extends Activity {
 						
 						android.os.Message msg = handler.obtainMessage();
 						transfer.recieveFile(file);
-						Msg msgInfo = queryMsgForListMsg(file.getName());
+						MessageInfo msgInfo = queryMsgForListMsg(file.getName());
 						msgInfo.setFilePath(file.getPath());//更新 filepath
 						new MyFileStatusThread(transfer, msgInfo).start();
 
@@ -296,9 +296,9 @@ public class ChatActivity extends Activity {
 					request.reject();
 					String[] args = new String[] { userChat,
 							request.getFileName(), TimeRender.getDate(), "IN",
-							Msg.TYPE[0], Msg.STATUS[1] };
-					Msg msgInfo = new Msg(args[0], "redio", args[2], args[3],
-							Msg.TYPE[0], Msg.STATUS[1]);
+							MessageInfo.TYPE[0], MessageInfo.STATUS[1] };
+					MessageInfo msgInfo = new MessageInfo(args[0], "redio", args[2], args[3],
+							MessageInfo.TYPE[0], MessageInfo.STATUS[1]);
 					// 在handler里取出来显示消息
 					android.os.Message msg = handler.obtainMessage();
 					msg.what = 5;
@@ -314,7 +314,7 @@ public class ChatActivity extends Activity {
 	 * 
 	 * @param path
 	 */
-	public void sendFile(String path, Msg msg) {
+	public void sendFile(String path, MessageInfo msg) {
 		/**
 		 * 发送文件
 		 */
@@ -340,9 +340,9 @@ public class ChatActivity extends Activity {
 
 	class MyFileStatusThread extends Thread {
 		private FileTransfer transfer;
-		private Msg msg;
+		private MessageInfo msg;
 
-		public MyFileStatusThread(FileTransfer tf, Msg msg) {
+		public MyFileStatusThread(FileTransfer tf, MessageInfo msg) {
 			transfer = tf;
 			this.msg = msg;
 		}
@@ -366,11 +366,11 @@ public class ChatActivity extends Activity {
 			}
 
 			if (transfer.getStatus().equals(Status.error)) {
-				msg.setReceive(Msg.STATUS[2]);
+				msg.setReceive(MessageInfo.STATUS[2]);
 			} else if (transfer.getStatus().equals(Status.refused)) {
-				msg.setReceive(Msg.STATUS[1]);
+				msg.setReceive(MessageInfo.STATUS[1]);
 			} else {
-				msg.setReceive(Msg.STATUS[0]);// 成功
+				msg.setReceive(MessageInfo.STATUS[0]);// 成功
 
 			}
 
@@ -386,7 +386,7 @@ public class ChatActivity extends Activity {
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
 			case 1:
-				Msg chatMsg = Msg.analyseMsgBody(msg.obj.toString());
+				MessageInfo chatMsg = MessageInfo.analyseMsgBody(msg.obj.toString());
 				if (chatMsg != null) {
 					listMsg.add(chatMsg);// 添加到聊天消息
 					adapter.notifyDataSetChanged();
@@ -400,7 +400,7 @@ public class ChatActivity extends Activity {
 				adapter.notifyDataSetChanged();
 				break;
 			case 5: // 接收文件
-				Msg msg2 = (Msg) msg.obj;
+				MessageInfo msg2 = (MessageInfo) msg.obj;
 				System.out.println(msg2.getFrom());
 				listMsg.add(msg2);
 				adapter.notifyDataSetChanged();
@@ -459,9 +459,9 @@ public class ChatActivity extends Activity {
 	/**
 	 * 从list 中取出 分拣名称相同的 Msg
 	 */
-	private Msg queryMsgForListMsg(String filePath){
+	private MessageInfo queryMsgForListMsg(String filePath){
 		
-		Msg msg = null;
+		MessageInfo msg = null;
 		for (int i = listMsg.size()-1; i>=0; i--) {
 			msg = listMsg.get(i);
 			if (filePath!=null && filePath.contains(msg.getFilePath()) ) {// 对方传过来的只是文件的名称

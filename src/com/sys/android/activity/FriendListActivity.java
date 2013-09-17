@@ -109,7 +109,8 @@ public class FriendListActivity extends Activity implements
 		listView = (ExpandableListView) findViewById(R.id.contact_list_view);
 		registerForContextMenu(listView);
 		try {
-			loadFriend();
+			loadLocalFriend();
+//			loadFriend();
 		} catch (Exception e) {
 			e.printStackTrace();
 			Intent intent = new Intent(this, LoginActivity.class);
@@ -291,6 +292,18 @@ public class FriendListActivity extends Activity implements
 		};
 	};
 
+	public void loadLocalFriend() {
+		groupList = new ArrayList<GroupInfo>();
+		groupInfo = new GroupInfo();
+		groupInfo.setGroupName("ÎÒµÄºÃÓÑ");
+		ArrayList<FriendInfo> friends = new ArrayList<FriendInfo>();
+		friends.add(new FriendInfo("test1", null));
+		groupInfo.setFriendInfoList(friends);
+		
+		groupList.add(groupInfo);
+		groupInfo = null;
+	
+	}
 	public void loadFriend() {
 		try {
 			XMPPConnection conn = XmppConnection.getConnection();
@@ -390,7 +403,7 @@ public class FriendListActivity extends Activity implements
 					if (TextUtils.isEmpty(holder.getGroupName())) {
 						groupList.remove(holder);
 					} else {
-						if (holder.getGroupName().equals(groupInfo)) {
+						if (holder.getGroupName().equals(groupName)) {
 							groupInfo = holder;
 						}
 					}

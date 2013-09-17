@@ -13,7 +13,12 @@ public class FriendInfo implements Serializable{
 	private String nickname;
 	private String mood;
 	
-	
+	public FriendInfo() {
+	}
+	public FriendInfo(String username, String nickname){
+		this.username = username;
+		this.nickname = nickname;
+	}
 	public String getMood() {
 		return mood;
 	}

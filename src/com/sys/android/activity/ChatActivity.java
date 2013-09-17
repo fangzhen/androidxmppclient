@@ -93,27 +93,28 @@ public class ChatActivity extends Activity {
 					public void onFinishedRecord(String audioPath, int time) {
 						Log.i("RECORD!!!", "finished!!!!!!!!!! save to "
 								+ audioPath);
-
+ 
 						if (audioPath != null) {
 							try {
 								// 自己显示消息
-								MessageInfo myChatMsg = new MessageInfo(pUSERID, time + "”语音消息",
-										TimeRender.getDate(), MessageInfo.FROM_TYPE[1],
-										MessageInfo.TYPE[0], MessageInfo.STATUS[3], time + "",
-										audioPath);
+								MessageInfo myChatMsg = new MessageInfo(pUSERID,
+										time + "”语音消息", TimeRender.getDate(),
+										MessageInfo.FROM_TYPE[1], MessageInfo.TYPE[0],
+										MessageInfo.STATUS[3], time + "", audioPath);
 								listMsg.add(myChatMsg);
 								String[] pathStrings = audioPath.split("/"); // 文件名
-								
-								//发送 对方的消息
-								String fileName = null ;
-								if (pathStrings!=null && pathStrings.length>0) {
-									fileName = pathStrings[pathStrings.length-1];
+
+								// 发送 对方的消息
+								String fileName = null;
+								if (pathStrings != null
+										&& pathStrings.length > 0) {
+									fileName = pathStrings[pathStrings.length - 1];
 								}
-								MessageInfo sendChatMsg = new MessageInfo(pUSERID, time + "”语音消息",
-										TimeRender.getDate(), MessageInfo.FROM_TYPE[0],
-										MessageInfo.TYPE[0], MessageInfo.STATUS[3], time + "",
-										fileName);
-								
+								MessageInfo sendChatMsg = new MessageInfo(pUSERID, time
+										+ "”语音消息", TimeRender.getDate(),
+										MessageInfo.FROM_TYPE[0], MessageInfo.TYPE[0],
+										MessageInfo.STATUS[3], time + "", fileName);
+
 								// 刷新适配器
 								adapter.notifyDataSetChanged();
 
@@ -171,8 +172,8 @@ public class ChatActivity extends Activity {
 			}
 		});
 
-		receivedMsg();// 接收消息
-		sendMsg();// 发送消息
+//		receivedMsg();// 接收消息
+		textMsg();// 发送+接受消息
 		receivedFile();// 接收文件
 
 	}
@@ -217,11 +218,27 @@ public class ChatActivity extends Activity {
 	 * @author Administrator
 	 * 
 	 */
-	public void sendMsg() {
+	public void textMsg() {
 		// 发送消息
 		Button btsend = (Button) findViewById(R.id.formclient_btsend);
 		// 发送消息给pc服务器的好友（获取自己的服务器，和好友）
-		newchat = cm.createChat(userChat, null);
+		//TODO:应先检测是否有未读消息
+		newchat = cm.createChat(userChat, new MessageListener() {
+		    public void processMessage(Chat chat, Message message) {
+		        System.out.println("Received message: " + message);
+				MessageInfo chatMsg = new MessageInfo(pUSERID, message.getBody(), TimeRender.getDate(),
+						MessageInfo.FROM_TYPE[0]); 
+				listMsg.add(chatMsg);
+				// 刷新适配器 费UI线程不能直接更新
+					ChatActivity.this.runOnUiThread(new Runnable() {
+						public void run() {
+							adapter.notifyDataSetChanged();						
+						}
+					});
+		    }
+		});
+
+
 		btsend.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -231,16 +248,14 @@ public class ChatActivity extends Activity {
 					// 自己显示消息
 					MessageInfo chatMsg = new MessageInfo(pUSERID, msg, TimeRender.getDate(),
 							MessageInfo.FROM_TYPE[1]);
- 					listMsg.add(chatMsg);
- 					//发送对方
- 					MessageInfo sendChatMsg = new MessageInfo(pUSERID, msg, TimeRender.getDate(),
-							MessageInfo.FROM_TYPE[0]); 
+					listMsg.add(chatMsg);
 					// 刷新适配器
 					adapter.notifyDataSetChanged();
 					try {
 						// 发送消息
-						newchat.sendMessage(MessageInfo.toJson(sendChatMsg));
-
+						Message toSend = new Message();
+						toSend.setBody(msg);
+						newchat.sendMessage(toSend);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -281,11 +296,11 @@ public class ChatActivity extends Activity {
 						System.out.println(request.getFileName());
 						File file = new File(RECORD_ROOT_PATH
 								+ request.getFileName());
-						
+
 						android.os.Message msg = handler.obtainMessage();
 						transfer.recieveFile(file);
 						MessageInfo msgInfo = queryMsgForListMsg(file.getName());
-						msgInfo.setFilePath(file.getPath());//更新 filepath
+						msgInfo.setFilePath(file.getPath());// 更新 filepath
 						new MyFileStatusThread(transfer, msgInfo).start();
 
 					} catch (XMPPException e) {
@@ -438,7 +453,7 @@ public class ChatActivity extends Activity {
 	 */
 	private boolean shouldAccept(FileTransferRequest request) {
 		final boolean isAccept[] = new boolean[1];
-	
+
 		return true;
 	}
 
@@ -455,16 +470,16 @@ public class ChatActivity extends Activity {
 		root = new File(RECORD_ROOT_PATH);
 		root.mkdirs();
 	}
-	
+
 	/**
 	 * 从list 中取出 分拣名称相同的 Msg
 	 */
-	private MessageInfo queryMsgForListMsg(String filePath){
-		
+	private MessageInfo queryMsgForListMsg(String filePath) {
+
 		MessageInfo msg = null;
-		for (int i = listMsg.size()-1; i>=0; i--) {
+		for (int i = listMsg.size() - 1; i >= 0; i--) {
 			msg = listMsg.get(i);
-			if (filePath!=null && filePath.contains(msg.getFilePath()) ) {// 对方传过来的只是文件的名称
+			if (filePath != null && filePath.contains(msg.getFilePath())) {// 对方传过来的只是文件的名称
 				return msg;
 			}
 		}

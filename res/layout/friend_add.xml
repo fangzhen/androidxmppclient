@@ -54,7 +54,6 @@
                 android:layout_marginRight="15dp"
                 android:layout_weight="1.0"
                 android:background="@color/Grey"
-                android:drawableLeft="@drawable/search_icon"
                 android:singleLine="true"
                 android:textStyle="bold" >
             </EditText>
@@ -63,7 +62,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:layout_alignParentRight="true"
-                android:text="搜索" >
+                android:text="加为好友" >
             </Button>
         </LinearLayout>
     </RelativeLayout>

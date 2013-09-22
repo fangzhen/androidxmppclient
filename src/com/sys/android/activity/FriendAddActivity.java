@@ -12,10 +12,6 @@ import org.jivesoftware.smackx.ReportedData;
 import org.jivesoftware.smackx.ReportedData.Row;
 import org.jivesoftware.smackx.search.UserSearchManager;
 
-import com.sys.android.xmpp.R;
-import com.sys.android.xmppmanager.XmppConnection;
-import com.sys.android.xmppmanager.XmppService;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -26,17 +22,21 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
+
+import com.sys.android.xmpp.R;
+import com.sys.android.xmppmanager.XmppConnection;
+import com.sys.android.xmppmanager.XmppService;
 
 @SuppressWarnings("all")
 public class FriendAddActivity extends Activity{
@@ -57,8 +57,27 @@ public class FriendAddActivity extends Activity{
 		search_button = (Button) findViewById(R.id.search_cancel_button);
 		search_button.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				  searchFriend();
+				  sendApplication();
 				}
+
+			private void sendApplication() {
+				String username = ((EditText) findViewById(R.id.search_text)).getText().toString();
+				String[] temp = username.split("@");
+				 if (temp.length <= 1){
+					username += "@" + XmppConnection.getConnection().getServiceName();
+				}
+				Roster roster = XmppConnection.getConnection().getRoster();
+				String groupName = "我的好友";
+				XmppService.addUser(roster, username, username);
+				Presence subscrption = new Presence(Presence.Type.subscribe);
+				subscrption.setTo(username);
+				finish();
+				Intent intent = new Intent();
+//   		 	intent.putExtra("USERID", pUSERID);
+//   		 	intent.putExtra("GROUPNAME", groupName);
+       		 	intent.setClass(FriendAddActivity.this, FriendListActivity.class);
+       		 	startActivity(intent);
+			}
 		});
 		//返回按钮
 		goback_button = (Button) findViewById(R.id.goback_button);

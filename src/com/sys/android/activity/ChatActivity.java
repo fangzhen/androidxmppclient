@@ -229,7 +229,7 @@ public class ChatActivity extends Activity {
 				MessageInfo chatMsg = new MessageInfo(pUSERID, message.getBody(), TimeRender.getDate(),
 						MessageInfo.FROM_TYPE[0]); 
 				listMsg.add(chatMsg);
-				// 刷新适配器 费UI线程不能直接更新
+				// 刷新适配器 非UI线程不能直接更新
 					ChatActivity.this.runOnUiThread(new Runnable() {
 						public void run() {
 							adapter.notifyDataSetChanged();						

@@ -64,8 +64,7 @@ import android.widget.TextView;
  * 好友列表
  */
 @SuppressWarnings("all")
-public class FriendListActivity extends Activity implements
-		OnGroupClickListener, OnChildClickListener {
+public class FriendListActivity extends Activity implements OnGroupClickListener, OnChildClickListener {
 	private String pUSERID;// 当前用户
 	private String pGROUPNAME;// 当前组
 	private LayoutInflater mChildInflater;
@@ -90,8 +89,8 @@ public class FriendListActivity extends Activity implements
 
 	// RESOURCE
 	public static String RESOUCE_NAME = "Spark 2.6.3";
-	public static String MY_RESOUCE_NAME ="Smack";
-	public static String SERVICE_NAME ="tp";
+	public static String MY_RESOUCE_NAME = "Smack";
+	public static String SERVICE_NAME = "tp";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -99,8 +98,7 @@ public class FriendListActivity extends Activity implements
 		friendListActivity = this;
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.friend_list);
-		mNotificationManager = (NotificationManager) this
-				.getSystemService(Service.NOTIFICATION_SERVICE);
+		mNotificationManager = (NotificationManager) this.getSystemService(Service.NOTIFICATION_SERVICE);
 		this.pUSERID = getIntent().getStringExtra("USERID");
 		this.pGROUPNAME = getIntent().getStringExtra("GROUPNAME");
 		this.fromUserJid = getIntent().getStringExtra("fromUserJid");
@@ -109,8 +107,8 @@ public class FriendListActivity extends Activity implements
 		listView = (ExpandableListView) findViewById(R.id.contact_list_view);
 		registerForContextMenu(listView);
 		try {
-			loadLocalFriend();
-//			loadFriend();
+			// loadLocalFriend();
+			loadFriend();
 		} catch (Exception e) {
 			e.printStackTrace();
 			Intent intent = new Intent(this, LoginActivity.class);
@@ -157,8 +155,7 @@ public class FriendListActivity extends Activity implements
 					Intent intent = new Intent();
 					intent.putExtra("USERID", pUSERID);
 					intent.putExtra("fromUserJid", fromUserJid);
-					intent.setClass(FriendListActivity.this,
-							FriendListActivity.class);
+					intent.setClass(FriendListActivity.this, FriendListActivity.class);
 					startActivity(intent);
 				}
 			}
@@ -174,8 +171,7 @@ public class FriendListActivity extends Activity implements
 					toUserJid = fromUserJids;
 				}
 				if (toUserJid != null) {
-					XmppService.addUserToGroup(toUserJid, pGROUPNAME,
-							connection);
+					XmppService.addUserToGroup(toUserJid, pGROUPNAME, connection);
 					loadFriend();
 				}
 			}
@@ -195,8 +191,7 @@ public class FriendListActivity extends Activity implements
 			public void presenceChanged(Presence presence) {
 				// TODO Auto-generated method stub
 				friendMood = presence.getStatus();
-				System.out.println("presence.getStatus()是："
-						+ presence.getStatus());
+				System.out.println("presence.getStatus()是：" + presence.getStatus());
 			}
 
 		});
@@ -210,8 +205,7 @@ public class FriendListActivity extends Activity implements
 					@Override
 					public void processMessage(Chat chat2, Message message) {
 						android.os.Message msg = handler.obtainMessage();
-						System.out.println("服务器发来的消息是 ：" + message.getFrom()
-								+ "  " + message.getBody());
+						System.out.println("服务器发来的消息是 ：" + message.getFrom() + "  " + message.getBody());
 						// setNotiType(R.drawable.log, message.getBody());
 						msg.obj = message.getBody();
 
@@ -222,48 +216,35 @@ public class FriendListActivity extends Activity implements
 		});
 		System.out.println("fromUserJid是：" + fromUserJid);
 		if (fromUserJid != null) {
-			AlertDialog.Builder dialog = new AlertDialog.Builder(
-					FriendListActivity.this);
-			dialog.setTitle("好友申请")
-					.setIcon(R.drawable.log)
-					.setMessage("【" + fromUserJid + "】向你发来好友申请，是否添加对方为好友?")
-					.setPositiveButton("添加",
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									// TODO Auto-generated method stub
-									dialog.cancel();// 取消弹出框
-									// 允许添加好友则回复消息，被邀请人应当也发送一个邀请请求。
-									Presence subscription = new Presence(
-											Presence.Type.subscribe);
-									subscription.setTo(fromUserJid);
-									XmppConnection.getConnection().sendPacket(
-											subscription);
-									System.out.println("pGROUPNAME是："
-											+ pGROUPNAME);
-									if (pGROUPNAME == null) {
-										pGROUPNAME = "我的好友";
-									}
-									XmppService.addUserToGroup(fromUserJid,
-											pGROUPNAME, connection);
-									Intent intent = new Intent();
-									intent.putExtra("USERID", pUSERID);
-									intent.putExtra("fromUserJid", CHECK);
-									intent.setClass(FriendListActivity.this,
-											FriendListActivity.class);
-									startActivity(intent);
-								}
-							})
-					.setNegativeButton("拒绝",
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int which) {
-									// TODO Auto-generated method stub
-									XmppService.removeUser(roster, fromUserJid);
-									dialog.cancel();// 取消弹出框
-								}
-							}).create().show();
+			AlertDialog.Builder dialog = new AlertDialog.Builder(FriendListActivity.this);
+			dialog.setTitle("好友申请").setIcon(R.drawable.log).setMessage("【" + fromUserJid + "】向你发来好友申请，是否添加对方为好友?")
+					.setPositiveButton("添加", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							// TODO Auto-generated method stub
+							dialog.cancel();// 取消弹出框
+							// 允许添加好友则回复消息，被邀请人应当也发送一个邀请请求。
+							Presence subscription = new Presence(Presence.Type.subscribe);
+							subscription.setTo(fromUserJid);
+							XmppConnection.getConnection().sendPacket(subscription);
+							System.out.println("pGROUPNAME是：" + pGROUPNAME);
+							if (pGROUPNAME == null) {
+								pGROUPNAME = "我的好友";
+							}
+							XmppService.addUserToGroup(fromUserJid, pGROUPNAME, connection);
+							Intent intent = new Intent();
+							intent.putExtra("USERID", pUSERID);
+							intent.putExtra("fromUserJid", CHECK);
+							intent.setClass(FriendListActivity.this, FriendListActivity.class);
+							startActivity(intent);
+						}
+					}).setNegativeButton("拒绝", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							// TODO Auto-generated method stub
+							XmppService.removeUser(roster, fromUserJid);
+							dialog.cancel();// 取消弹出框
+						}
+					}).create().show();
 		}
 	}
 
@@ -299,11 +280,12 @@ public class FriendListActivity extends Activity implements
 		ArrayList<FriendInfo> friends = new ArrayList<FriendInfo>();
 		friends.add(new FriendInfo("test1", null));
 		groupInfo.setFriendInfoList(friends);
-		
+
 		groupList.add(groupInfo);
 		groupInfo = null;
-	
+
 	}
+
 	public void loadFriend() {
 		try {
 			XMPPConnection conn = XmppConnection.getConnection();
@@ -318,14 +300,10 @@ public class FriendListActivity extends Activity implements
 				for (RosterEntry entry : entries) {
 					if ("both".equals(entry.getType().name())) {// 只添加双边好友
 						friendInfo = new FriendInfo();
-						friendInfo.setUsername(Utils.getJidToUsername(entry
-								.getUser()));
-						System.out
-								.println("我的好友心情是："
-										+ entry.getStatus().fromString(
-												entry.getUser()));
+						friendInfo.setUsername(Utils.getJidToUsername(entry.getUser()));
+						System.out.println("我的好友心情是：" + entry.getStatus().fromString(entry.getUser()));
 						if (friendMood == null) {
-							friendMood = "Q我吧，静待你的来信！";
+							friendMood = "";
 						}
 						friendInfo.setMood(friendMood);
 						friendList.add(friendInfo);
@@ -339,8 +317,26 @@ public class FriendListActivity extends Activity implements
 			if (groupList.isEmpty()) {
 				groupInfo = new GroupInfo();
 				groupInfo.setGroupName("我的好友");
-				groupInfo.setFriendInfoList(new ArrayList<FriendInfo>());
+				ArrayList<FriendInfo> friendList = new ArrayList<FriendInfo>();
+				groupInfo.setFriendInfoList(friendList);
 				groupList.add(groupInfo);
+				Collection<RosterEntry> entries = roster.getEntries();
+				if (entries != null) {
+					for (RosterEntry entry : entries) {
+						if ("both".equals(entry.getType().name())) {// 只添加双边好友
+							friendInfo = new FriendInfo();
+							friendInfo.setUsername(Utils.getJidToUsername(entry.getUser()));
+							System.out.println("我的好友心情是：" + entry.getStatus().fromString(entry.getUser()));
+							if (friendMood == null) {
+								friendMood = "";
+							}
+							friendInfo.setMood(friendMood);
+							friendList.add(friendInfo);
+							friendInfo = null;
+						}
+					}
+				}
+
 				groupInfo = null;
 			}
 		} catch (Exception e) {
@@ -367,8 +363,7 @@ public class FriendListActivity extends Activity implements
 		Context context;
 
 		public MyAdapter(Context context) {
-			mChildInflater = (LayoutInflater) context
-					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			mChildInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		}
 
 		class FriendHolder {
@@ -415,8 +410,7 @@ public class FriendListActivity extends Activity implements
 		@Override
 		public FriendInfo getChild(int groupPosition, int childPosition) {
 			// TODO Auto-generated method stub
-			return groupList.get(groupPosition).getFriendInfoList()
-					.get(childPosition);
+			return groupList.get(groupPosition).getFriendInfoList().get(childPosition);
 		}
 
 		@Override
@@ -438,17 +432,13 @@ public class FriendListActivity extends Activity implements
 		}
 
 		@Override
-		public View getGroupView(int groupPosition, boolean isExpanded,
-				View convertView, ViewGroup parent) {
+		public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
 			FriendHolder holder;
 			if (convertView == null) {
 				holder = new FriendHolder();
-				convertView = mChildInflater.inflate(
-						R.layout.friend_group_item, null);
-				holder.name = (TextView) convertView
-						.findViewById(R.id.friend_group_list_name);
-				holder.iv = (ImageView) convertView
-						.findViewById(R.id.friend_group_list_icon);
+				convertView = mChildInflater.inflate(R.layout.friend_group_item, null);
+				holder.name = (TextView) convertView.findViewById(R.id.friend_group_list_name);
+				holder.iv = (ImageView) convertView.findViewById(R.id.friend_group_list_icon);
 				convertView.setTag(holder);
 			} else {
 				holder = (FriendHolder) convertView.getTag();
@@ -464,23 +454,18 @@ public class FriendListActivity extends Activity implements
 		}
 
 		@Override
-		public View getChildView(int groupPosition, int childPosition,
-				boolean isLastChild, View convertView, ViewGroup parent) {
+		public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 			FriendHolder holder;
 			if (convertView == null) {
 				holder = new FriendHolder();
-				convertView = mChildInflater.inflate(
-						R.layout.friend_child_item, null);
-				holder.name = (TextView) convertView
-						.findViewById(R.id.friend_nickname);
-				holder.mood = (TextView) convertView
-						.findViewById(R.id.friend_mood);
+				convertView = mChildInflater.inflate(R.layout.friend_child_item, null);
+				holder.name = (TextView) convertView.findViewById(R.id.friend_nickname);
+				holder.mood = (TextView) convertView.findViewById(R.id.friend_mood);
 				convertView.setTag(holder);
 			} else {
 				holder = (FriendHolder) convertView.getTag();
 			}
-			FriendInfo groupname = groupList.get(groupPosition)
-					.getFriendInfoList().get(childPosition);
+			FriendInfo groupname = groupList.get(groupPosition).getFriendInfoList().get(childPosition);
 			holder.name.setText(groupname.getUsername());
 			holder.mood.setText(groupname.getMood());
 			if (isLastChild) {
@@ -497,16 +482,13 @@ public class FriendListActivity extends Activity implements
 	}
 
 	@Override
-	public boolean onGroupClick(ExpandableListView parent, View view,
-			int groupPosition, long id) {
+	public boolean onGroupClick(ExpandableListView parent, View view, int groupPosition, long id) {
 		return false;
 	}
 
 	@Override
-	public boolean onChildClick(ExpandableListView parent, View v,
-			int groupPosition, int childPosition, long id) {
-		FriendInfo info = groupList.get(groupPosition).getFriendInfoList()
-				.get(childPosition);
+	public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+		FriendInfo info = groupList.get(groupPosition).getFriendInfoList().get(childPosition);
 		Intent intent = new Intent(this, ChatActivity.class);
 		String pFRIENDID = info.getJid();
 		intent.putExtra("FRIENDID", pFRIENDID);
@@ -526,14 +508,10 @@ public class FriendListActivity extends Activity implements
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
-		menu.add(Menu.NONE, Menu.FIRST + 1, 1, "刷新列表").setIcon(
-				R.drawable.menu_refresh);
-		menu.add(Menu.NONE, Menu.FIRST + 2, 1, "更新心情").setIcon(
-				R.drawable.menu_setting);
-		menu.add(Menu.NONE, Menu.FIRST + 3, 1, "添加好友").setIcon(
-				R.drawable.addfriends_icon_icon);
-		menu.add(Menu.NONE, Menu.FIRST + 4, 1, "退出登录").setIcon(
-				R.drawable.menu_exit);
+		menu.add(Menu.NONE, Menu.FIRST + 1, 1, "刷新列表").setIcon(R.drawable.menu_refresh);
+		menu.add(Menu.NONE, Menu.FIRST + 2, 1, "更新心情").setIcon(R.drawable.menu_setting);
+		menu.add(Menu.NONE, Menu.FIRST + 3, 1, "添加好友").setIcon(R.drawable.addfriends_icon_icon);
+		menu.add(Menu.NONE, Menu.FIRST + 4, 1, "退出登录").setIcon(R.drawable.menu_exit);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -552,32 +530,21 @@ public class FriendListActivity extends Activity implements
 			break;
 		case Menu.FIRST + 2:
 			LayoutInflater layoutInflater = LayoutInflater.from(this);
-			final View myMoodView = layoutInflater.inflate(
-					R.layout.dialog_mood, null);
-			Dialog dialog = new AlertDialog.Builder(this)
-					.setView(myMoodView)
-					.setPositiveButton("更改",
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									myMood = ((EditText) myMoodView
-											.findViewById(R.id.myMood))
-											.getText().toString().trim();
-									System.out.println("我更改的心情是：" + myMood);
-									XmppService.changeStateMessage(connection,
-											myMood);
-									myStatusText.setText(myMood);
-								}
-							})
-					.setNegativeButton("取消",
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									dialog.cancel();
-								}
-							}).create();
+			final View myMoodView = layoutInflater.inflate(R.layout.dialog_mood, null);
+			Dialog dialog = new AlertDialog.Builder(this).setView(myMoodView).setPositiveButton("更改", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					myMood = ((EditText) myMoodView.findViewById(R.id.myMood)).getText().toString().trim();
+					System.out.println("我更改的心情是：" + myMood);
+					XmppService.changeStateMessage(connection, myMood);
+					myStatusText.setText(myMood);
+				}
+			}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			}).create();
 			dialog.show();
 			break;
 		case Menu.FIRST + 3:
@@ -602,67 +569,45 @@ public class FriendListActivity extends Activity implements
 	 * 长按事件删除好友
 	 */
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
-			ContextMenuInfo menuInfo) {
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		if (menuInfo instanceof ExpandableListView.ExpandableListContextMenuInfo) {
 
 			ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
 
-			int type = ExpandableListView
-					.getPackedPositionType(info.packedPosition);
+			int type = ExpandableListView.getPackedPositionType(info.packedPosition);
 
 			if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
 
-				int groupPos = ExpandableListView
-						.getPackedPositionGroup(info.packedPosition);
-				int childPos = ExpandableListView
-						.getPackedPositionChild(info.packedPosition);
-				final FriendInfo dInfo = groupList.get(groupPos)
-						.getFriendInfoList().get(childPos);
+				int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
+				int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
+				final FriendInfo dInfo = groupList.get(groupPos).getFriendInfoList().get(childPos);
 				final GroupInfo gInfo = groupList.get(groupPos);
 				LayoutInflater layoutInflater = LayoutInflater.from(this);
-				View delFriendView = layoutInflater.inflate(
-						R.layout.dialog_del_friend, null);
-				TextView delname = (TextView) delFriendView
-						.findViewById(R.id.delname);
+				View delFriendView = layoutInflater.inflate(R.layout.dialog_del_friend, null);
+				TextView delname = (TextView) delFriendView.findViewById(R.id.delname);
 				delname.setText(dInfo.getJid());
-				final CheckBox delCheckBox = (CheckBox) delFriendView
-						.findViewById(R.id.delCheckBox);
-				Dialog dialog = new AlertDialog.Builder(this)
-						.setIcon(R.drawable.default_head)
-						.setTitle("删除好友")
-						.setView(delFriendView)
-						.setPositiveButton("确定",
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-										XmppService.removeUserFromGroup(
-												dInfo.getJid(),
-												gInfo.getGroupName(),
-												connection);
-										if (delCheckBox.isChecked()) {
-											XmppService.removeUser(roster,
-													dInfo.getJid());
-										}
-										Intent intent = new Intent();
-										intent.putExtra("USERID", pUSERID);
-										intent.putExtra("fromUserJid", CHECK);
-										intent.setClass(
-												FriendListActivity.this,
-												FriendListActivity.class);
-										startActivity(intent);
-									}
-								})
-						.setNegativeButton("取消",
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-										dialog.cancel();
-									}
-								}).create();
+				final CheckBox delCheckBox = (CheckBox) delFriendView.findViewById(R.id.delCheckBox);
+				Dialog dialog = new AlertDialog.Builder(this).setIcon(R.drawable.default_head).setTitle("删除好友").setView(delFriendView)
+						.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								XmppService.removeUserFromGroup(dInfo.getJid(), gInfo.getGroupName(), connection);
+								if (delCheckBox.isChecked()) {
+									XmppService.removeUser(roster, dInfo.getJid());
+								}
+								Intent intent = new Intent();
+								intent.putExtra("USERID", pUSERID);
+								intent.putExtra("fromUserJid", CHECK);
+								intent.setClass(FriendListActivity.this, FriendListActivity.class);
+								startActivity(intent);
+							}
+						}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.cancel();
+							}
+						}).create();
 				dialog.show();
 			}
 		}

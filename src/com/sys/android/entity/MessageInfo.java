@@ -4,12 +4,14 @@ import org.jivesoftware.smackx.filetransfer.FileTransfer.Status;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.sys.android.util.TimeRender;
 
  
-public class MessageInfo {
+public class MessageInfo implements Parcelable{
 	String userid;
 	String msg;
 	String date;
@@ -203,5 +205,44 @@ public class MessageInfo {
 			return jsonStr;
 		}
 	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(userid);
+		dest.writeString(msg);
+		dest.writeString(date);
+		dest.writeString(from);
+		dest.writeString(type);
+		dest.writeString(receive);
+		dest.writeString(time);
+		dest.writeString(filePath);
+	}
 	
+	public static final Parcelable.Creator<MessageInfo> CREATOR = new Creator<MessageInfo>() {
+
+		@Override
+		public MessageInfo createFromParcel(Parcel source) {
+			MessageInfo messageInfo = new MessageInfo();
+			messageInfo.userid = source.readString();
+			messageInfo.msg = source.readString();
+			messageInfo.date = source.readString();
+			messageInfo.from = source.readString();
+			messageInfo.type = source.readString();
+			messageInfo.receive = source.readString();
+			messageInfo.time = source.readString();
+			messageInfo.filePath = source.readString();
+			return messageInfo;
+		}
+
+		@Override
+		public MessageInfo[] newArray(int size) {
+			return new MessageInfo[size];
+		}
+	
+	};
 }

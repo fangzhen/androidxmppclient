@@ -39,7 +39,7 @@ public class XmppConnection {
 	
 	//public static String SERVER_HOST = "192.168.1.99";//你openfire服务器所在的ip
 	//public static  String SERVER_NAME = "aa";//设置openfire时的服务器名
-	public static int    SERVER_PORT = 5222;//服务端口 可以在openfire上设置
+	public static int    SERVER_PORT = 15222;//服务端口 可以在openfire上设置
 	public static String SERVER_HOST = "59.64.33.32";//你openfire服务器所在的ip
 	public static  String SERVER_NAME = "59.64.33.32";//设置openfire时的服务器名
     private static XMPPConnection connection = null;

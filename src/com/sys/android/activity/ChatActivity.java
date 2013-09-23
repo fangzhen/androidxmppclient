@@ -1,7 +1,8 @@
 package com.sys.android.activity;
 
 import java.io.File;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.jivesoftware.smack.Chat;
@@ -19,14 +20,10 @@ import org.jivesoftware.smackx.filetransfer.IncomingFileTransfer;
 import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
 
 import android.app.Activity;
-
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -54,7 +51,7 @@ public class ChatActivity extends Activity {
 	private String userChat = "";// 当前聊天 userChat
 	private String userChatSendFile = "";// 给谁发文件
 	private ChatListAdapter adapter;
-	private List<MessageInfo> listMsg = new LinkedList<MessageInfo>();
+	private List<MessageInfo> listMsg = new ArrayList<MessageInfo>();
 	private String pUSERID;// 自己的user
 	private String pFRIENDID;// 窗口的 名称
 	private EditText msgText;
@@ -146,6 +143,7 @@ public class ChatActivity extends Activity {
 															 */
 		userChatSendFile = userChat + "/" + FriendListActivity.MY_RESOUCE_NAME;
 		this.pFRIENDID = getIntent().getStringExtra("FRIENDID");
+		listMsg.addAll((Collection<? extends MessageInfo>) getIntent().getParcelableArrayListExtra("cached"));
 		/*
 		 * System.out.println("接收消息的用户pFRIENDID是：" + userChat);
 		 * System.out.println("发送消息的用户pUSERID是：" + pUSERID);
@@ -226,7 +224,7 @@ public class ChatActivity extends Activity {
 		newchat = cm.createChat(userChat, new MessageListener() {
 		    public void processMessage(Chat chat, Message message) {
 		        System.out.println("Received message: " + message);
-				MessageInfo chatMsg = new MessageInfo(pUSERID, message.getBody(), TimeRender.getDate(),
+				MessageInfo chatMsg = new MessageInfo(pFRIENDID, message.getBody(), TimeRender.getDate(),
 						MessageInfo.FROM_TYPE[0]); 
 				listMsg.add(chatMsg);
 				// 刷新适配器 非UI线程不能直接更新
@@ -424,14 +422,14 @@ public class ChatActivity extends Activity {
 			}
 		};
 	};
-
+/*
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
 		// XmppConnection.closeConnection();
 		System.exit(0);
 	}
-
+*/
 	protected void setNotiType(int iconId, String s) {
 		Intent intent = new Intent();
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -485,4 +483,5 @@ public class ChatActivity extends Activity {
 		}
 		return msg;
 	}
+	
 }

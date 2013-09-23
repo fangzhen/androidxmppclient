@@ -2,22 +2,34 @@ package com.sys.android.entity;
 
 import java.io.Serializable;
 
-import com.sys.android.xmppmanager.XmppConnection;
 
 import android.text.TextUtils;
 
 
 @SuppressWarnings("serial")
 public class FriendInfo implements Serializable{
-	private String username;
+	private String userJid;
 	private String nickname;
 	private String mood;
+	private int newMsgNum;
 	
+	public int getNewMsgNum() {
+		return newMsgNum;
+	}
+	public void setNewMsgNum(int newMsgNum) {
+		this.newMsgNum = newMsgNum;
+	}
 	public FriendInfo() {
 	}
-	public FriendInfo(String username, String nickname){
-		this.username = username;
+	public FriendInfo(String userJid, String nickname){
+		this.userJid = userJid;
 		this.nickname = nickname;
+	}
+	public String getUserJid() {
+		return userJid;
+	}
+	public void setUserJid(String userJid) {
+		this.userJid = userJid;
 	}
 	public String getMood() {
 		return mood;
@@ -25,23 +37,17 @@ public class FriendInfo implements Serializable{
 	public void setMood(String mood) {
 		this.mood = mood;
 	}
-	public String getUsername() {
-		return username;
-	}
-	public void setUsername(String username) {
-		this.username = username;
-	}
 	public String getNickname() {
 		if(TextUtils.isEmpty(nickname))
-			return username;
+			return userJid;
 		return nickname;
 	}
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
 	
-	public String getJid(){
-		if (username == null) return null;
-		return username + "@" +XmppConnection.SERVER_NAME;
+	public String getUsername(){
+		if (userJid == null) return null;
+		return userJid.substring(0, userJid.indexOf('@'));
 	}
 }

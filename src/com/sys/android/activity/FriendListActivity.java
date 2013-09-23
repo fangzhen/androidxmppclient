@@ -2,31 +2,24 @@ package com.sys.android.activity;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.MessageListener;
-import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterGroup;
 import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 
-import com.sys.android.entity.FriendInfo;
-import com.sys.android.entity.GroupInfo;
-import com.sys.android.util.Utils;
-import com.sys.android.xmpp.R;
-import com.sys.android.xmppmanager.XmppConnection;
-import com.sys.android.xmppmanager.XmppService;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -41,24 +34,31 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
-import android.widget.Toast;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.sys.android.entity.FriendInfo;
+import com.sys.android.entity.GroupInfo;
+import com.sys.android.entity.MessageInfo;
+import com.sys.android.util.TimeRender;
+import com.sys.android.xmpp.R;
+import com.sys.android.xmppmanager.XmppConnection;
+import com.sys.android.xmppmanager.XmppService;
 
 /**
  * 好友列表
@@ -91,6 +91,9 @@ public class FriendListActivity extends Activity implements OnGroupClickListener
 	public static String RESOUCE_NAME = "Spark 2.6.3";
 	public static String MY_RESOUCE_NAME = "Smack";
 	public static String SERVICE_NAME = "tp";
+	
+	public static final int NEW_MESSAGE=1; 
+	private Map<String, ArrayList<MessageInfo>> cachedMessages = new HashMap<String, ArrayList<MessageInfo>>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +127,6 @@ public class FriendListActivity extends Activity implements OnGroupClickListener
 		listView.setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View v) {
-				// TODO Auto-generated method stub
 				return false;
 			}
 		});
@@ -144,7 +146,6 @@ public class FriendListActivity extends Activity implements OnGroupClickListener
 			@Override
 			// 监听好友申请消息
 			public void entriesAdded(Collection<String> invites) {
-				// TODO Auto-generated method stub
 				System.out.println("监听到好友申请的消息是：" + invites);
 				for (Iterator iter = invites.iterator(); iter.hasNext();) {
 					String fromUserJids = (String) iter.next();
@@ -163,7 +164,6 @@ public class FriendListActivity extends Activity implements OnGroupClickListener
 			@Override
 			// 监听好友同意添加消息
 			public void entriesUpdated(Collection<String> invites) {
-				// TODO Auto-generated method stub
 				System.out.println("监听到好友同意的消息是：" + invites);
 				for (Iterator iter = invites.iterator(); iter.hasNext();) {
 					String fromUserJids = (String) iter.next();
@@ -179,7 +179,6 @@ public class FriendListActivity extends Activity implements OnGroupClickListener
 			@Override
 			// 监听好友删除消息
 			public void entriesDeleted(Collection<String> delFriends) {
-				// TODO Auto-generated method stub
 				System.out.println("监听到删除好友的消息是：" + delFriends);
 				if (delFriends.size() > 0) {
 					loadFriend();
@@ -189,7 +188,6 @@ public class FriendListActivity extends Activity implements OnGroupClickListener
 			@Override
 			// 监听好友状态改变消息
 			public void presenceChanged(Presence presence) {
-				// TODO Auto-generated method stub
 				friendMood = presence.getStatus();
 				System.out.println("presence.getStatus()是：" + presence.getStatus());
 			}
@@ -207,8 +205,13 @@ public class FriendListActivity extends Activity implements OnGroupClickListener
 						android.os.Message msg = handler.obtainMessage();
 						System.out.println("服务器发来的消息是 ：" + message.getFrom() + "  " + message.getBody());
 						// setNotiType(R.drawable.log, message.getBody());
-						msg.obj = message.getBody();
-
+//						msg.obj = message.getBody();
+						Bundle b = new Bundle();
+						b.putString("from", message.getFrom());
+						b.putString("to", message.getTo());
+						b.putString("body", message.getBody());
+						msg.setData(b);
+						msg.what= NEW_MESSAGE;
 						msg.sendToTarget();
 					}
 				});
@@ -221,7 +224,6 @@ public class FriendListActivity extends Activity implements OnGroupClickListener
 					.setPositiveButton("添加", new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							// TODO Auto-generated method stub
 							dialog.cancel();// 取消弹出框
 							// 允许添加好友则回复消息，被邀请人应当也发送一个邀请请求。
 							Presence subscription = new Presence(Presence.Type.subscribe);
@@ -240,7 +242,6 @@ public class FriendListActivity extends Activity implements OnGroupClickListener
 						}
 					}).setNegativeButton("拒绝", new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
-							// TODO Auto-generated method stub
 							XmppService.removeUser(roster, fromUserJid);
 							dialog.cancel();// 取消弹出框
 						}
@@ -261,11 +262,39 @@ public class FriendListActivity extends Activity implements OnGroupClickListener
 		mNotificationManager.notify(0, myNoti);
 	}
 
-	private Handler handler = new Handler() {
+	protected Handler handler = new Handler() {
+		
+		//we do not have delayed message, so the leak should not be a problem
+		@SuppressLint("HandlerLeak")
 		public void handleMessage(android.os.Message msg) {
+			System.out.println("new message received!");
 			switch (msg.what) {
-			case 1:
-				String[] args = (String[]) msg.obj;
+			case NEW_MESSAGE:
+				Bundle bundle = msg.getData();
+				String from = bundle.getString("from");
+				String to = bundle.getString("to");
+				String body = bundle.getString("body");
+				for (GroupInfo groupInfo : groupList){
+					List<FriendInfo> friendlist = groupInfo.getFriendInfoList();
+					for(FriendInfo friend : friendlist){
+						if (friend.getUserJid().equals(from)){
+							friend.setMood("new message");
+							ArrayList<MessageInfo> msgs = cachedMessages.get(from);
+							if (msgs == null){
+								msgs = new ArrayList<MessageInfo>();
+								cachedMessages.put(from, msgs);
+							}
+							MessageInfo mInfo = new MessageInfo();
+							mInfo.setDate(TimeRender.getDate());
+							mInfo.setMsg(body);
+							mInfo.setFrom(MessageInfo.FROM_TYPE[0]);
+							mInfo.setUserid(from);
+							msgs.add(mInfo);
+							break;
+						}
+					}
+				}
+				adapter.notifyDataSetChanged();
 				break;
 			default:
 				break;
@@ -300,7 +329,7 @@ public class FriendListActivity extends Activity implements OnGroupClickListener
 				for (RosterEntry entry : entries) {
 					if ("both".equals(entry.getType().name())) {// 只添加双边好友
 						friendInfo = new FriendInfo();
-						friendInfo.setUsername(Utils.getJidToUsername(entry.getUser()));
+						friendInfo.setUserJid(entry.getUser());
 						System.out.println("我的好友心情是：" + entry.getStatus().fromString(entry.getUser()));
 						if (friendMood == null) {
 							friendMood = "";
@@ -325,7 +354,7 @@ public class FriendListActivity extends Activity implements OnGroupClickListener
 					for (RosterEntry entry : entries) {
 						if ("both".equals(entry.getType().name())) {// 只添加双边好友
 							friendInfo = new FriendInfo();
-							friendInfo.setUsername(Utils.getJidToUsername(entry.getUser()));
+							friendInfo.setUserJid(entry.getUser());
 							System.out.println("我的好友心情是：" + entry.getStatus().fromString(entry.getUser()));
 							if (friendMood == null) {
 								friendMood = "";
@@ -374,13 +403,11 @@ public class FriendListActivity extends Activity implements OnGroupClickListener
 
 		@Override
 		public int getGroupCount() {
-			// TODO Auto-generated method stub
 			return groupList.size();
 		}
 
 		@Override
 		public int getChildrenCount(int groupPosition) {
-			// TODO Auto-generated method stub
 			return groupList.get(groupPosition).getFriendInfoList().size();
 		}
 
@@ -409,25 +436,21 @@ public class FriendListActivity extends Activity implements OnGroupClickListener
 
 		@Override
 		public FriendInfo getChild(int groupPosition, int childPosition) {
-			// TODO Auto-generated method stub
 			return groupList.get(groupPosition).getFriendInfoList().get(childPosition);
 		}
 
 		@Override
 		public long getGroupId(int groupPosition) {
-			// TODO Auto-generated method stub
 			return groupPosition;
 		}
 
 		@Override
 		public long getChildId(int groupPosition, int childPosition) {
-			// TODO Auto-generated method stub
 			return childPosition;
 		}
 
 		@Override
 		public boolean hasStableIds() {
-			// TODO Auto-generated method stub
 			return false;
 		}
 
@@ -466,7 +489,7 @@ public class FriendListActivity extends Activity implements OnGroupClickListener
 				holder = (FriendHolder) convertView.getTag();
 			}
 			FriendInfo groupname = groupList.get(groupPosition).getFriendInfoList().get(childPosition);
-			holder.name.setText(groupname.getUsername());
+			holder.name.setText(groupname.getUserJid());
 			holder.mood.setText(groupname.getMood());
 			if (isLastChild) {
 				listView.setItemChecked(groupPosition, true);
@@ -476,7 +499,6 @@ public class FriendListActivity extends Activity implements OnGroupClickListener
 
 		@Override
 		public boolean isChildSelectable(int groupPosition, int childPosition) {
-			// TODO Auto-generated method stub
 			return true;
 		}
 	}
@@ -490,10 +512,12 @@ public class FriendListActivity extends Activity implements OnGroupClickListener
 	public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 		FriendInfo info = groupList.get(groupPosition).getFriendInfoList().get(childPosition);
 		Intent intent = new Intent(this, ChatActivity.class);
-		String pFRIENDID = info.getJid();
+		String pFRIENDID = info.getUserJid();
 		intent.putExtra("FRIENDID", pFRIENDID);
 		intent.putExtra("user", pFRIENDID);
 		intent.putExtra("USERID", pUSERID);
+		intent.putExtra("cached", cachedMessages.get(pFRIENDID));
+		cachedMessages.remove(pFRIENDID);
 		startActivity(intent);
 		return false;
 	}
@@ -586,15 +610,15 @@ public class FriendListActivity extends Activity implements OnGroupClickListener
 				LayoutInflater layoutInflater = LayoutInflater.from(this);
 				View delFriendView = layoutInflater.inflate(R.layout.dialog_del_friend, null);
 				TextView delname = (TextView) delFriendView.findViewById(R.id.delname);
-				delname.setText(dInfo.getJid());
+				delname.setText(dInfo.getUserJid());
 				final CheckBox delCheckBox = (CheckBox) delFriendView.findViewById(R.id.delCheckBox);
 				Dialog dialog = new AlertDialog.Builder(this).setIcon(R.drawable.default_head).setTitle("删除好友").setView(delFriendView)
 						.setPositiveButton("确定", new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								XmppService.removeUserFromGroup(dInfo.getJid(), gInfo.getGroupName(), connection);
+								XmppService.removeUserFromGroup(dInfo.getUserJid(), gInfo.getGroupName(), connection);
 								if (delCheckBox.isChecked()) {
-									XmppService.removeUser(roster, dInfo.getJid());
+									XmppService.removeUser(roster, dInfo.getUserJid());
 								}
 								Intent intent = new Intent();
 								intent.putExtra("USERID", pUSERID);
